@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: #050c14;
+    color: #ecf7fa;
+    letter-spacing: 0.005em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #050c14;
+    color: #ecf7fa;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.shader-panel {
+  background: rgba(9, 20, 32, 0.82);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(56, 189, 248, 0.14);
+}
+
+.shader-surface {
+  background: rgba(12, 26, 40, 0.72);
+  border: 1px solid rgba(45, 212, 191, 0.14);
+}
+
+.shader-accent-text {
+  background: linear-gradient(120deg, #38bdf8 0%, #2dd4bf 55%, #34d399 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.shader-btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 55%, #10b981 100%);
+  color: #03151e;
+}
+
+.shader-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.shader-ring-gradient {
+  background: conic-gradient(from 140deg, #0ea5e9, #14b8a6, #34d399, #38bdf8, #0ea5e9);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,361 @@
+{
+  "entities": {
+    "UserPublicProfile": {
+      "title": "UserPublicProfile",
+      "description": "Non-PII anonymous mask profile and shareable Friend Code for an authenticated Drift user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "handle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "friendCode": { "type": "string", "minLength": 9, "maxLength": 9, "pattern": "^[A-Z0-9]{4}-[A-Z0-9]{4}$" },
+        "hue": { "type": "integer" },
+        "glyphIndex": { "type": "integer" },
+        "isPublicDirectory": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "handle", "friendCode", "hue", "glyphIndex", "isPublicDirectory", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "PII-isolated private user metadata readable and writable only by the account owner.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "displayName", "createdAt"]
+    },
+    "UserChatRef": {
+      "title": "UserChatRef",
+      "description": "Per-user sidebar reference to a private DM or group chat.",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "kind": { "type": "string", "enum": ["dm", "group"] },
+        "title": { "type": "string", "minLength": 2, "maxLength": 48 },
+        "peerUid": { "type": "string", "maxLength": 128 },
+        "peerHandle": { "type": "string", "maxLength": 32 },
+        "peerHue": { "type": "integer" },
+        "lastMessageText": { "type": "string", "maxLength": 280 },
+        "lastMessageAtMs": { "type": "integer" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chatId", "uid", "kind", "title", "lastMessageAtMs", "updatedAt"]
+    },
+    "FriendRequest": {
+      "title": "FriendRequest",
+      "description": "Pending, accepted, or declined friend request between two verified Drift users.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 4, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "fromUid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "fromHandle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "fromHue": { "type": "integer" },
+        "toUid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "toHandle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "toHue": { "type": "integer" },
+        "participants": { "type": "array" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "declined"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "fromUid", "fromHandle", "fromHue", "toUid", "toHandle", "toHue", "participants", "status", "createdAt", "updatedAt"]
+    },
+    "Friendship": {
+      "title": "Friendship",
+      "description": "Confirmed bidirectional friendship created atomically upon friend request acceptance.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 4, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "requestId": { "type": "string", "minLength": 4, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "uidA": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "handleA": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "hueA": { "type": "integer" },
+        "uidB": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "handleB": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "hueB": { "type": "integer" },
+        "participants": { "type": "array" },
+        "acceptedBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "requestId", "uidA", "handleA", "hueA", "uidB", "handleB", "hueB", "participants", "acceptedBy", "createdAt"]
+    },
+    "ChatRoom": {
+      "title": "ChatRoom",
+      "description": "Private 1-to-1 DM or multi-friend Group Chat metadata.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "kind": { "type": "string", "enum": ["dm", "group"] },
+        "name": { "type": "string", "minLength": 2, "maxLength": 48 },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "memberIds": { "type": "array" },
+        "lastMessageText": { "type": "string", "maxLength": 280 },
+        "lastMessageAtMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "kind", "name", "createdBy", "memberIds", "lastMessageAtMs", "createdAt", "updatedAt"]
+    },
+    "ChatMember": {
+      "title": "ChatMember",
+      "description": "Authoritative Master Gate member entry inside a private DM or group chat.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "chatId": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "handle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "hue": { "type": "integer" },
+        "role": { "type": "string", "enum": ["owner", "member"] },
+        "visibleTo": { "type": "array" },
+        "joinedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "chatId", "handle", "hue", "role", "visibleTo", "joinedAt"]
+    },
+    "PrivateChatMessage": {
+      "title": "PrivateChatMessage",
+      "description": "Message sent inside a private DM or group chat, optionally expiring or carrying a forwarded story.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "chatId": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorHandle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "authorHue": { "type": "integer" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 400 },
+        "ttlKey": { "type": "string", "enum": ["forever", "30s", "2m", "10m", "1h"] },
+        "burnOnRead": { "type": "boolean" },
+        "memberIds": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdAtMs": { "type": "integer" },
+        "expiresAtMs": { "type": "integer" },
+        "reactionCounts": { "type": "object" },
+        "sharedStoryId": { "type": "string", "maxLength": 128 },
+        "sharedStoryHeadline": { "type": "string", "maxLength": 90 },
+        "sharedStoryZoneName": { "type": "string", "maxLength": 48 },
+        "locationLat": { "type": "number" },
+        "locationLng": { "type": "number" },
+        "locationLabel": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "locationIsLive": { "type": "boolean" }
+      },
+      "required": ["id", "chatId", "authorId", "authorHandle", "authorHue", "text", "ttlKey", "burnOnRead", "memberIds", "createdAt", "createdAtMs", "expiresAtMs", "reactionCounts"]
+    },
+    "UserPresence": {
+      "title": "UserPresence",
+      "description": "Live neighborhood presence entry for an active user using their anonymous mask.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "handle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "hue": { "type": "integer" },
+        "zoneId": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "isLiveLocation": { "type": "boolean" },
+        "accuracyMeters": { "type": "integer" },
+        "visibility": { "type": "string", "enum": ["public"] },
+        "lastSeenAt": { "type": "string", "format": "date-time" },
+        "lastSeenMs": { "type": "integer" }
+      },
+      "required": ["uid", "handle", "hue", "zoneId", "lat", "lng", "visibility", "lastSeenAt", "lastSeenMs"]
+    },
+    "LocationZone": {
+      "title": "LocationZone",
+      "description": "A neighborhood or user-created local hotspot room.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 2, "maxLength": 48 },
+        "neighborhood": { "type": "string", "minLength": 2, "maxLength": 64 },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "visibility": { "type": "string", "enum": ["public"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "neighborhood", "lat", "lng", "createdBy", "visibility", "createdAt"]
+    },
+    "LocationStory": {
+      "title": "LocationStory",
+      "description": "An anonymous, expiring location-based story posted by a verified user.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "zoneId": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "zoneName": { "type": "string", "minLength": 2, "maxLength": 48 },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorHandle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "authorHue": { "type": "integer" },
+        "headline": { "type": "string", "minLength": 3, "maxLength": 90 },
+        "caption": { "type": "string", "minLength": 4, "maxLength": 400 },
+        "imageUrl": { "type": "string", "maxLength": 500000 },
+        "vibe": { "type": "string", "enum": ["Happening Now", "Food & Pop-up", "Street Music", "Secret Spot", "Heads Up"] },
+        "visibility": { "type": "string", "enum": ["public"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdAtMs": { "type": "integer" },
+        "expiresAtMs": { "type": "integer" },
+        "boostCount": { "type": "integer" },
+        "shareCount": { "type": "integer" },
+        "replyCount": { "type": "integer" }
+      },
+      "required": ["id", "zoneId", "zoneName", "lat", "lng", "authorId", "authorHandle", "authorHue", "headline", "caption", "vibe", "visibility", "createdAt", "createdAtMs", "expiresAtMs", "boostCount", "shareCount", "replyCount"]
+    },
+    "StoryBoost": {
+      "title": "StoryBoost",
+      "description": "Per-user atomic boost record for a story.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "storyId": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "storyId", "createdAt"]
+    },
+    "StoryReply": {
+      "title": "StoryReply",
+      "description": "Expiring reply attached to a story.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "storyId": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorHandle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "authorHue": { "type": "integer" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 220 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdAtMs": { "type": "integer" },
+        "expiresAtMs": { "type": "integer" }
+      },
+      "required": ["id", "storyId", "authorId", "authorHandle", "authorHue", "text", "createdAt", "createdAtMs", "expiresAtMs"]
+    },
+    "EphemeralMessage": {
+      "title": "EphemeralMessage",
+      "description": "Real-time expiring whisper message inside a location zone.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "zoneId": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorHandle": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "authorHue": { "type": "integer" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 280 },
+        "ttlKey": { "type": "string", "enum": ["30s", "2m", "10m", "1h"] },
+        "burnOnRead": { "type": "boolean" },
+        "visibility": { "type": "string", "enum": ["zone"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdAtMs": { "type": "integer" },
+        "expiresAtMs": { "type": "integer" },
+        "reactionCounts": { "type": "object" },
+        "replyToStoryId": { "type": "string", "maxLength": 128 },
+        "replyToHeadline": { "type": "string", "maxLength": 90 },
+        "locationLat": { "type": "number" },
+        "locationLng": { "type": "number" },
+        "locationLabel": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "locationIsLive": { "type": "boolean" }
+      },
+      "required": ["id", "zoneId", "authorId", "authorHandle", "authorHue", "text", "ttlKey", "burnOnRead", "visibility", "createdAt", "createdAtMs", "expiresAtMs", "reactionCounts"]
+    },
+    "MessageReaction": {
+      "title": "MessageReaction",
+      "description": "Per-user bounded reaction list on a message.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "messageId": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "emojis": { "type": "array" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "messageId", "emojis", "updatedAt"]
+    },
+    "MessageReveal": {
+      "title": "MessageReveal",
+      "description": "Per-user burn-on-read reveal marker for a message.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "messageId": { "type": "string", "minLength": 2, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "revealedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "messageId", "revealedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserPublicProfile" },
+      "description": "Public anonymous mask settings and friend codes per user (no PII)."
+    },
+    "/users/{userId}/private/info": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Private PII document accessible only to the owning user."
+    },
+    "/users/{userId}/chatRefs/{chatId}": {
+      "schema": { "$ref": "#/entities/UserChatRef" },
+      "description": "Per-user sidebar inbox references for private DMs and group chats."
+    },
+    "/friendRequests/{requestId}": {
+      "schema": { "$ref": "#/entities/FriendRequest" },
+      "description": "Friend requests sent between authenticated users."
+    },
+    "/friendships/{pairId}": {
+      "schema": { "$ref": "#/entities/Friendship" },
+      "description": "Confirmed bidirectional friendships."
+    },
+    "/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatRoom" },
+      "description": "Private 1-to-1 DMs and multi-friend group chat rooms."
+    },
+    "/chats/{chatId}/members/{userId}": {
+      "schema": { "$ref": "#/entities/ChatMember" },
+      "description": "Authoritative Master Gate member records for a private chat or group."
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/PrivateChatMessage" },
+      "description": "Messages inside private DMs and group chats."
+    },
+    "/chats/{chatId}/messages/{messageId}/reactions/{userId}": {
+      "schema": { "$ref": "#/entities/MessageReaction" },
+      "description": "Per-user reaction markers on private/group chat messages."
+    },
+    "/chats/{chatId}/messages/{messageId}/reveals/{userId}": {
+      "schema": { "$ref": "#/entities/MessageReveal" },
+      "description": "Per-user burn-on-read reveal markers on private/group chat messages."
+    },
+    "/presence/{userId}": {
+      "schema": { "$ref": "#/entities/UserPresence" },
+      "description": "Active neighborhood presence beacons for real users."
+    },
+    "/zones/{zoneId}": {
+      "schema": { "$ref": "#/entities/LocationZone" },
+      "description": "Location zones and user-created local hotspot rooms."
+    },
+    "/stories/{storyId}": {
+      "schema": { "$ref": "#/entities/LocationStory" },
+      "description": "Live expiring location-based stories."
+    },
+    "/stories/{storyId}/boosts/{userId}": {
+      "schema": { "$ref": "#/entities/StoryBoost" },
+      "description": "Atomic per-user boost markers for a story."
+    },
+    "/stories/{storyId}/replies/{replyId}": {
+      "schema": { "$ref": "#/entities/StoryReply" },
+      "description": "Expiring replies to a story."
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/EphemeralMessage" },
+      "description": "Real-time expiring whispers inside location zones."
+    },
+    "/messages/{messageId}/reactions/{userId}": {
+      "schema": { "$ref": "#/entities/MessageReaction" },
+      "description": "Per-user bounded reaction markers on a message."
+    },
+    "/messages/{messageId}/reveals/{userId}": {
+      "schema": { "$ref": "#/entities/MessageReveal" },
+      "description": "Per-user burn-on-read reveal markers on a message."
+    }
+  }
+}
